@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="jar" name="SH Quiz: Core">
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="${dir.buildfile}/../../.."/>
+    <property name="dir.project" value="${dir.buildfile}/../.."/>
+
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="jar">
+		<mkdir dir="../install"/>
+        <jar destfile="../install/sh.core.jar">
+            <manifest>
+                <attribute name="Bundle-Name" value="SH Quiz: Core"/>
+                <attribute name="Bundle-Description" value="A bundle that registers the SH Quiz Core."/>
+                <attribute name="Bundle-Vendor" value="The Shtick"/>
+                <attribute name="Bundle-Version" value="0.1.0"/>
+                <attribute name="Export-Package" value="com.shtick.apps.sh.core,com.shtick.apps.sh.core.content,com,com.shtick.utils.data.json"/>
+                <attribute name="Import-Package" value="com.shtick.util.tokenizers,com.shtick.util.tokenizers.json"/>
+            </manifest>
+            <fileset dir="../../bin"/>
+        </jar>
+    </target>
+
+    <target name="jar_and_bundle" depends="jar">
+        <copy file="../install/sh.core.jar" todir="${dir.workspace}/sh-main/dist/install/bundle"/>
+    </target>
+</project>
