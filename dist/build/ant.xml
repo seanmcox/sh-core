@@ -14,8 +14,7 @@
                 <attribute name="Bundle-Description" value="A bundle that registers the SH Quiz Core."/>
                 <attribute name="Bundle-Vendor" value="The Shtick"/>
                 <attribute name="Bundle-Version" value="0.1.0"/>
-                <attribute name="Export-Package" value="com.shtick.apps.sh.core,com.shtick.apps.sh.core.content,com,com.shtick.utils.data.json"/>
-                <attribute name="Import-Package" value="com.shtick.util.tokenizers,com.shtick.util.tokenizers.json"/>
+                <attribute name="Export-Package" value="com.shtick.apps.sh.core,com.shtick.apps.sh.core.content,com,com.shtick.utils.data.json,com.shtick.util.tokenizers,com.shtick.util.tokenizers.json"/>
             </manifest>
             <fileset dir="../../bin"/>
         </jar>
