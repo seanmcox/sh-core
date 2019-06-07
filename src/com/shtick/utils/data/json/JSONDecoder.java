@@ -34,11 +34,12 @@ public class JSONDecoder {
 	/**
 	 * 
 	 * @param in
-	 * @param numberDecoder 
-	 * @return A Map
+	 * @param numberDecoder Provides customized behavior for converting a JSON number to an Object. (Optional)
+	 * @return A Map&lt;String,Object>, Double (or whatever the provided numberDecoder identifies to be returned), a List&lt;Object>, String, Boolean, or null.
+	 *         null will be returned either for the null literal, or for an empty in.
 	 * @throws IllegalArgumentException
 	 */
-	public static Map<String,Object> decode(InputStream in, JSONNumberDecoder numberDecoder) throws IllegalArgumentException{
+	public static Object decode(InputStream in, JSONNumberDecoder numberDecoder) throws IllegalArgumentException{
 		TokenTree<JSONToken> tokenTree;
 		try{
 			tokenTree = jsonTokenizer.tokenize(in);
@@ -50,50 +51,49 @@ public class JSONDecoder {
 		catch(IOException t){
 			throw new RuntimeException(t);
 		}
-		return decodeMap(tokenTree, numberDecoder);
+		return decode(tokenTree, numberDecoder);
 	}
 	
 	/**
 	 * 
-	 * @param jsonMap
-	 * @param numberDecoder 
-	 * @return A Map
+	 * @param json
+	 * @param numberDecoder Provides customized behavior for converting a JSON number to an Object. (Optional)
+	 * @return A Map&lt;String,Object>, Double (or whatever the provided numberDecoder identifies to be returned), a List&lt;Object>, String, Boolean, or null.
+	 *         null will be returned either for the null literal, or for an empty json value.
 	 * @throws IllegalArgumentException
 	 */
-	public static Map<String,Object> decode(String jsonMap, JSONNumberDecoder numberDecoder) throws IllegalArgumentException{
+	public static Object decode(String json, JSONNumberDecoder numberDecoder) throws IllegalArgumentException{
 		TokenTree<JSONToken> tokenTree;
-		jsonMap=jsonMap.trim();
-		if(jsonMap.length()==0)
-			return new HashMap<>();
+		json=json.trim();
+		if(json.length()==0)
+			return null;
 		try{
-			tokenTree = jsonTokenizer.tokenize(new StringReader(jsonMap));
+			tokenTree = jsonTokenizer.tokenize(new StringReader(json));
 		}
 		catch(IOException t){
 			throw new RuntimeException(t);
 		}
-		return decodeMap(tokenTree, numberDecoder);
+		return decode(tokenTree, numberDecoder);
 	}
 
-	private static Map<String,Object> decodeMap(TokenTree<JSONToken> tokenTree, JSONNumberDecoder numberDecoder) throws IllegalArgumentException{
+	private static Object decode(TokenTree<JSONToken> tokenTree, JSONNumberDecoder numberDecoder) throws IllegalArgumentException{
 		Iterator<JSONToken> iter = tokenTree.iterator();
 		if(!iter.hasNext())
 			return null;
 		JSONToken token = iter.next();
-		if(!(token instanceof ObjectToken))
-			throw new IllegalArgumentException("Input was not a valid JSON encoded object.");
 		if(iter.hasNext())
 			throw new IllegalArgumentException("Extra data was found in the input.");
 		Collection<TokenIssue> allIssues = tokenTree.getAllIssues();
 		if(tokenTree.getAllIssues().size()>0)
 			throw new IllegalArgumentException("Syntax errors ("+allIssues.size()+") in JSON. eg. "+allIssues.iterator().next().getDescription());
 		
-		return decodeObject((ObjectToken)token, numberDecoder);
+		return decodeUncertain(token, numberDecoder);
 	}
 
 	/**
 	 * 
 	 * @param value
-	 * @param numberDecoder
+	 * @param numberDecoder Provides customized behavior for converting a JSON number to an Object. (Optional)
 	 * @return A Map&lt;String,Object>, a List&lt;Object>, a String, a null, a Boolean, or whatever is returned by the numberDecoder (by default, this is a Double).
 	 * @throws IllegalArgumentException
 	 */
